@@ -1,4 +1,4 @@
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import CTextInput from '../Common/CTextInput';
@@ -6,6 +6,7 @@ import {moderateScale} from '../Common/Constant';
 import CButton from '../Common/CButton';
 import uuid from 'react-native-uuid';
 import firestore from '@react-native-firebase/firestore';
+import CKeyboardAvoidWrapper from '../Common/CKeyboardAvoidWrapper';
 
 export default function SignUpScreen({navigation}) {
   const [email, setEmail] = useState('');
@@ -59,6 +60,7 @@ export default function SignUpScreen({navigation}) {
   return (
     <CSafeAreaView extraStyle={{backgroundColor: 'white'}}>
       <View style={styles.main}>
+      <CKeyboardAvoidWrapper>
         <View style={styles.innerview}>
           <Text style={styles.title}>SignUpScreen</Text>
           <CTextInput
@@ -85,6 +87,7 @@ export default function SignUpScreen({navigation}) {
             onChangeText={onChangeConfirmPassword}
           />
         </View>
+        </CKeyboardAvoidWrapper>
         <CButton
           title={'Sign In'}
           extrabtn={styles.btn}
@@ -126,6 +129,7 @@ const styles = StyleSheet.create({
   innerview: {
     flex: 1,
     justifyContent: 'center',
+    marginTop:moderateScale(100)
   },
   login: {
     alignSelf: 'center',
@@ -135,4 +139,5 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(15),
     fontWeight: 'bold',
   },
+ 
 });

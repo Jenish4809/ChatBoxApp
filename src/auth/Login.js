@@ -5,33 +5,56 @@ import CTextInput from '../Common/CTextInput';
 import {moderateScale} from '../Common/Constant';
 import CButton from '../Common/CButton';
 import firestore from '@react-native-firebase/firestore';
+import {CLoader} from '../Common/CLoader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const onChangeEmail = text => setEmail(text);
   const onChangePassword = text => setPassword(text);
 
+  if (isLoading) {
+    return <CLoader />;
+  }
+
   const onpressLogin = () => navigation.navigate('SignUpScreen');
   const loginUser = () => {
+    setIsLoading(true);
     firestore()
       .collection('Users')
       .where('email', '==', email)
       .get()
       .then(querySnapshot => {
+        setIsLoading(false);
+        setIsLoading(false);
         if (querySnapshot.size > 0) {
           querySnapshot.forEach(documentSnapshot => {
+            gotoNext(
+              documentSnapshot.data().email,
+              documentSnapshot.data().name,
+              documentSnapshot.data().userId,
+            );
             console.log(
               'User ID: ',
               documentSnapshot.id,
-              documentSnapshot.data(),
+              documentSnapshot.data().email,
             );
           });
         } else {
+          setIsLoading(false);
           Alert.alert('No user found!');
         }
       });
+  };
+
+  const gotoNext = async (name, email, userId) => {
+    await AsyncStorage.setItem('NAME', name),
+      await AsyncStorage.setItem('EMAIL', email),
+      await AsyncStorage.setItem('USERID', userId);
+    navigation.navigate('Home')
   };
   return (
     <CSafeAreaView extraStyle={{backgroundColor: 'white'}}>
