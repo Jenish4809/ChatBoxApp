@@ -1,9 +1,11 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import CTextInput from '../Common/CTextInput';
 import {moderateScale} from '../Common/Constant';
 import CButton from '../Common/CButton';
+import uuid from 'react-native-uuid';
+import firestore from '@react-native-firebase/firestore';
 
 export default function SignUpScreen({navigation}) {
   const [email, setEmail] = useState('');
@@ -17,6 +19,41 @@ export default function SignUpScreen({navigation}) {
   const onChangeMobile = text => setMobile(text);
   const onChangePassword = text => setPassword(text);
   const onChangeConfirmPassword = text => setConfirmPassword(text);
+
+  const userId = uuid.v4();
+  const registerUser = () => {
+    firestore()
+      .collection('Users')
+      .doc(userId)
+      .set({
+        email: email,
+        name: name,
+        mobile: mobile,
+        password: password,
+        userId: userId,
+      })
+      .then(res => {
+        Alert.alert('User Registered Successfully');
+        navigation.navigate('Login');
+        setEmail('');
+        setName('');
+        setMobile('');
+        setPassword('');
+        setConfirmPassword('');
+      });
+  };
+
+  const validate = () => {
+    let isValid = true;
+    if (!email || !name || !mobile || !password || !confirmPassword) {
+      Alert.alert('All fields are required');
+      isValid = false;
+    } else if (password !== confirmPassword) {
+      Alert.alert('Password and Confirm Password should be same');
+      isValid = false;
+    }
+    return isValid;
+  };
 
   const onPressLogin = () => navigation.navigate('Login');
   return (
@@ -52,6 +89,11 @@ export default function SignUpScreen({navigation}) {
           title={'Sign In'}
           extrabtn={styles.btn}
           extratitle={styles.btntitle}
+          onPress={() => {
+            if (validate()) {
+              registerUser();
+            }
+          }}
         />
         <TouchableOpacity onPress={onPressLogin}>
           <Text style={styles.login}>Or Login</Text>

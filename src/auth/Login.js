@@ -1,9 +1,10 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {useState} from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import CTextInput from '../Common/CTextInput';
 import {moderateScale} from '../Common/Constant';
 import CButton from '../Common/CButton';
+import firestore from '@react-native-firebase/firestore';
 
 export default function Login({navigation}) {
   const [email, setEmail] = useState('');
@@ -12,7 +13,26 @@ export default function Login({navigation}) {
   const onChangeEmail = text => setEmail(text);
   const onChangePassword = text => setPassword(text);
 
-  const onPressSignUp = () => navigation.navigate('SignUpScreen');
+  const onpressLogin = () => navigation.navigate('SignUpScreen');
+  const loginUser = () => {
+    firestore()
+      .collection('Users')
+      .where('email', '==', email)
+      .get()
+      .then(querySnapshot => {
+        if (querySnapshot.size > 0) {
+          querySnapshot.forEach(documentSnapshot => {
+            console.log(
+              'User ID: ',
+              documentSnapshot.id,
+              documentSnapshot.data(),
+            );
+          });
+        } else {
+          Alert.alert('No user found!');
+        }
+      });
+  };
   return (
     <CSafeAreaView extraStyle={{backgroundColor: 'white'}}>
       <View style={styles.main}>
@@ -34,8 +54,9 @@ export default function Login({navigation}) {
           title={'Log in'}
           extrabtn={styles.btn}
           extratitle={styles.btntitle}
+          onPress={loginUser}
         />
-        <TouchableOpacity onPress={onPressSignUp}>
+        <TouchableOpacity onPress={onpressLogin}>
           <Text style={styles.login}>Or SignUp</Text>
         </TouchableOpacity>
       </View>
