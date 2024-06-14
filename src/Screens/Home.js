@@ -3,8 +3,11 @@ import React from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import {moderateScale} from '../Common/Constant';
 import images from '../assets/images';
+import Users from '../tabs/Users';
+import Settings from '../tabs/Settings';
 
 export default function Home() {
+  const [selectedTab, setSelectedTab] = React.useState(0);
   const CommonButton = ({onPress, source, extra}) => {
     return (
       <TouchableOpacity style={styles.btn} onPress={onPress}>
@@ -12,16 +15,30 @@ export default function Home() {
       </TouchableOpacity>
     );
   };
+
   return (
     <CSafeAreaView extraStyle={{backgroundColor: 'white'}}>
       <View style={styles.main}>
+        {selectedTab === 0 ? <Users /> : <Settings />}
         <View style={styles.bottomTab}>
           <CommonButton
+            onPress={() => setSelectedTab(0)}
             title={'User'}
             source={images.user}
-            extra={styles.img}
+            extra={[
+              styles.img,
+              {tintColor: selectedTab === 0 ? '#fff' : '#000'},
+            ]}
           />
-          <CommonButton title={'Chat'} />
+          <CommonButton
+            onPress={() => setSelectedTab(1)}
+            title={'Chat'}
+            source={images.setting}
+            extra={[
+              styles.img,
+              {tintColor: selectedTab === 1 ? '#fff' : '#000'},
+            ]}
+          />
         </View>
       </View>
     </CSafeAreaView>
@@ -42,14 +59,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   btn: {
-    backgroundColor: 'red',
+    backgroundColor: '#24786D',
     height: '100%',
     width: '50%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   img: {
-    height: moderateScale(20),
-    width: moderateScale(20),
+    height: moderateScale(30),
+    width: moderateScale(30),
+    color: 'white',
   },
 });
