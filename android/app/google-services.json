@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "988826280523",
+    "project_id": "chatboxfire",
+    "storage_bucket": "chatboxfire.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988826280523:android:c24936055a80a1673863ce",
+        "android_client_info": {
+          "package_name": "com.chatboxapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwIpy4VPvzjf6JtWRSQo-fSD16YumJEpk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
