@@ -6,21 +6,25 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {moderateScale} from '../Common/Constant';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import images from '../assets/images';
+import {useNavigation} from '@react-navigation/native';
+let id = '';
 
-export default function Users({navigation}) {
-  const [users, setUsers] = React.useState([]);
+export default function Users() {
+  const [users, setUsers] = useState([]);
+  const navigation = useNavigation();
   useEffect(() => {
     getUsers();
   }, []);
 
   const getUsers = async () => {
+    id = await AsyncStorage.getItem('USERID');
     let tempData = [];
-    const emailId = await AsyncStorage.getItem('NAME');
+    const emailId = await AsyncStorage.getItem('EMAIL');
     firestore()
       .collection('Users')
       .where('email', '!=', emailId)
@@ -40,7 +44,7 @@ export default function Users({navigation}) {
       <TouchableOpacity
         style={styles.renderview}
         onPress={() => {
-          navigation.navigate('Chat');
+          navigation.navigate('Chat', {data: item, id: id});
         }}>
         <Image source={images.user} style={styles.userimg} />
         <Text style={styles.username}>{item.name}</Text>

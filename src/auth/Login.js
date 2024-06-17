@@ -30,7 +30,8 @@ export default function Login({navigation}) {
       .then(result => {
         setIsLoading(false);
         if (result.docs.length > 0) {
-          gotoNext(result.docs.map(item => item.data().item));
+          const user = result.docs[0].data();
+          gotoNext(user.name, user.email, user.userId);
         } else {
           setIsLoading(false);
           Alert.alert('No user found!');
@@ -39,9 +40,9 @@ export default function Login({navigation}) {
   };
 
   const gotoNext = async (name, email, userId) => {
-    await AsyncStorage.setItem('NAME', name),
-      await AsyncStorage.setItem('EMAIL', email),
-      await AsyncStorage.setItem('USERID', userId);
+    await AsyncStorage.setItem('NAME', String(name)),
+      await AsyncStorage.setItem('EMAIL', String(email)),
+      await AsyncStorage.setItem('USERID', String(userId));
     navigation.navigate('Home');
   };
   return (
