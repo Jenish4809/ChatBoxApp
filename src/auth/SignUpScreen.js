@@ -1,4 +1,12 @@
-import {Alert, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React, {useState} from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import CTextInput from '../Common/CTextInput';
@@ -60,33 +68,37 @@ export default function SignUpScreen({navigation}) {
   return (
     <CSafeAreaView extraStyle={{backgroundColor: 'white'}}>
       <View style={styles.main}>
-      <CKeyboardAvoidWrapper>
-        <View style={styles.innerview}>
-          <Text style={styles.title}>SignUpScreen</Text>
-          <CTextInput
-            title={'Email'}
-            keyboardType={'email-address'}
-            value={email}
-            onChangeText={onChangeEmail}
-          />
-          <CTextInput title={'Name'} value={name} onChangeText={onChangeName} />
-          <CTextInput
-            title={'Mobile'}
-            keyboardType={'phone-pad'}
-            value={mobile}
-            onChangeText={onChangeMobile}
-          />
-          <CTextInput
-            title={'password'}
-            value={password}
-            onChangeText={onChangePassword}
-          />
-          <CTextInput
-            title={'Confirm Password'}
-            value={confirmPassword}
-            onChangeText={onChangeConfirmPassword}
-          />
-        </View>
+        <CKeyboardAvoidWrapper>
+          <View style={styles.innerview}>
+            <Text style={styles.title}>SignUpScreen</Text>
+            <CTextInput
+              title={'Email'}
+              keyboardType={'email-address'}
+              value={email}
+              onChangeText={onChangeEmail}
+            />
+            <CTextInput
+              title={'Name'}
+              value={name}
+              onChangeText={onChangeName}
+            />
+            <CTextInput
+              title={'Mobile'}
+              keyboardType={'phone-pad'}
+              value={mobile}
+              onChangeText={onChangeMobile}
+            />
+            <CTextInput
+              title={'password'}
+              value={password}
+              onChangeText={onChangePassword}
+            />
+            <CTextInput
+              title={'Confirm Password'}
+              value={confirmPassword}
+              onChangeText={onChangeConfirmPassword}
+            />
+          </View>
         </CKeyboardAvoidWrapper>
         <CButton
           title={'Sign In'}
@@ -129,7 +141,7 @@ const styles = StyleSheet.create({
   innerview: {
     flex: 1,
     justifyContent: 'center',
-    marginTop:moderateScale(100)
+    marginTop: moderateScale(100),
   },
   login: {
     alignSelf: 'center',
@@ -139,5 +151,4 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(15),
     fontWeight: 'bold',
   },
- 
 });

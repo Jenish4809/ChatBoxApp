@@ -27,22 +27,10 @@ export default function Login({navigation}) {
       .collection('Users')
       .where('email', '==', email)
       .get()
-      .then(querySnapshot => {
+      .then(result => {
         setIsLoading(false);
-        setIsLoading(false);
-        if (querySnapshot.size > 0) {
-          querySnapshot.forEach(documentSnapshot => {
-            gotoNext(
-              documentSnapshot.data().email,
-              documentSnapshot.data().name,
-              documentSnapshot.data().userId,
-            );
-            console.log(
-              'User ID: ',
-              documentSnapshot.id,
-              documentSnapshot.data().email,
-            );
-          });
+        if (result.docs.length > 0) {
+          gotoNext(result.docs.map(item => item.data().item));
         } else {
           setIsLoading(false);
           Alert.alert('No user found!');
@@ -54,7 +42,7 @@ export default function Login({navigation}) {
     await AsyncStorage.setItem('NAME', name),
       await AsyncStorage.setItem('EMAIL', email),
       await AsyncStorage.setItem('USERID', userId);
-    navigation.navigate('Home')
+    navigation.navigate('Home');
   };
   return (
     <CSafeAreaView extraStyle={{backgroundColor: 'white'}}>
