@@ -1,13 +1,16 @@
 import {
   FlatList,
   Image,
+  Platform,
+  RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {moderateScale} from '../Common/Constant';
+import {isIOS, moderateScale} from '../Common/Constant';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import images from '../assets/images';
@@ -17,9 +20,17 @@ let id = '';
 export default function Users() {
   const [users, setUsers] = useState([]);
   const navigation = useNavigation();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   useEffect(() => {
     getUsers();
   }, []);
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    getUsers();
+    setIsRefreshing(false);
+  };
 
   const getUsers = async () => {
     id = await AsyncStorage.getItem('USERID');
@@ -58,7 +69,17 @@ export default function Users() {
         <Text style={styles.title}>ChatBox Chat App</Text>
       </View>
       <View style={styles.innerview}>
-        <FlatList data={users} renderItem={renderUsers} />
+        <ScrollView
+          bounces={isIOS ? true : false}
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+          }>
+          <FlatList
+            data={users}
+            renderItem={renderUsers}
+            scrollEnabled={false}
+          />
+        </ScrollView>
       </View>
     </View>
   );
