@@ -11,9 +11,12 @@ const renderBubble = props => {
         left: styles.leftBubble,
         right: styles.rightBubble,
       }}
+      containerStyle={{
+        left: {right: moderateScale(40)},
+      }}
       textStyle={{
         left: {
-          color: '#fff',
+          color: '#000',
         },
         right: {
           color: 'white',
@@ -25,7 +28,7 @@ const renderBubble = props => {
 
 const styles = StyleSheet.create({
   leftBubble: {
-    backgroundColor: '#000',
+    backgroundColor: '#fff',
     padding: moderateScale(5),
   },
   rightBubble: {
