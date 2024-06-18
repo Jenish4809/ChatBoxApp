@@ -1,6 +1,6 @@
 import {ImageBackground, StyleSheet, Text, View} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import {GiftedChat} from 'react-native-gifted-chat';
+import {GiftedChat, InputToolbar, Send} from 'react-native-gifted-chat';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import firestore from '@react-native-firebase/firestore';
 import {moderateScale} from '../Common/Constant';
@@ -78,6 +78,7 @@ export default function Chat({route}) {
             _id: id,
           }}
           renderBubble={renderBubble}
+          textInputStyle={styles.textInput}
         />
       </ImageBackground>
     </CSafeAreaView>
@@ -108,5 +109,8 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: moderateScale(18),
     fontWeight: 'bold',
+  },
+  textInput: {
+    color: '#000',
   },
 });

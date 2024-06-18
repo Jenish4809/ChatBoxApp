@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(16),
     fontWeight: 'bold',
     marginBottom: moderateScale(5),
+    color: '#24786D',
   },
   postBody: {
     fontSize: moderateScale(14),
@@ -164,6 +165,7 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   inputsty: {
+    color: '#000',
     borderColor: '#24786D',
     borderWidth: moderateScale(2),
     borderRadius: moderateScale(10),

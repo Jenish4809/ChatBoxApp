@@ -3,7 +3,8 @@ import React from 'react';
 import {moderateScale} from './Constant';
 
 export default function CTextInput(props) {
-  let {onChangeText, value, keyboardType, title, placeholder} = props;
+  let {onChangeText, value, keyboardType, title, placeholder, extrastyle} =
+    props;
   return (
     <View>
       <Text style={styles.titlesty}>{title}</Text>
@@ -26,6 +27,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontSize: moderateScale(16),
     padding: moderateScale(10),
+    color: '#000',
   },
   titlesty: {
     fontSize: moderateScale(14),
