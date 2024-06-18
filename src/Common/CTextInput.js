@@ -3,7 +3,7 @@ import React from 'react';
 import {moderateScale} from './Constant';
 
 export default function CTextInput(props) {
-  let {onChangeText, value, keyboardType, title} = props;
+  let {onChangeText, value, keyboardType, title, placeholder} = props;
   return (
     <View>
       <Text style={styles.titlesty}>{title}</Text>
@@ -12,6 +12,7 @@ export default function CTextInput(props) {
         onChangeText={onChangeText}
         value={value}
         keyboardType={keyboardType}
+        placeholder={placeholder}
       />
     </View>
   );

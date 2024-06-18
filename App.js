@@ -7,6 +7,7 @@ import Home from './src/Screens/Home';
 import Users from './src/tabs/Users';
 import Settings from './src/tabs/Settings';
 import Chat from './src/Screens/Chat';
+import ApiUserData from './src/tabs/ApiUserData';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -23,6 +24,7 @@ export default function App() {
         <Stack.Screen name="Settings" component={Settings} />
         <Stack.Screen name="Users" component={Users} />
         <Stack.Screen name="Chat" component={Chat} />
+        <Stack.Screen name="ApiUserData" component={ApiUserData} />
       </Stack.Navigator>
     </NavigationContainer>
   );

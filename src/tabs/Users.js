@@ -1,7 +1,6 @@
 import {
   FlatList,
   Image,
-  Platform,
   RefreshControl,
   ScrollView,
   StyleSheet,

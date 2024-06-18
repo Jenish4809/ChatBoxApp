@@ -5,6 +5,7 @@ import {moderateScale} from '../Common/Constant';
 import images from '../assets/images';
 import Users from '../tabs/Users';
 import Settings from '../tabs/Settings';
+import ApiUserData from '../tabs/ApiUserData';
 
 export default function Home() {
   const [selectedTab, setSelectedTab] = React.useState(0);
@@ -19,7 +20,13 @@ export default function Home() {
   return (
     <CSafeAreaView extraStyle={{backgroundColor: 'white'}}>
       <View style={styles.main}>
-        {selectedTab === 0 ? <Users /> : <Settings />}
+        {selectedTab === 0 ? (
+          <Users />
+        ) : selectedTab === 1 ? (
+          <Settings />
+        ) : selectedTab === 2 ? (
+          <ApiUserData />
+        ) : null}
         <View style={styles.bottomTab}>
           <CommonButton
             onPress={() => setSelectedTab(0)}
@@ -28,6 +35,15 @@ export default function Home() {
             extra={[
               styles.img,
               {tintColor: selectedTab === 0 ? '#fff' : '#000'},
+            ]}
+          />
+          <CommonButton
+            onPress={() => setSelectedTab(2)}
+            title={'ApiUser'}
+            source={images.apiuser}
+            extra={[
+              styles.img,
+              {tintColor: selectedTab === 2 ? '#fff' : '#000'},
             ]}
           />
           <CommonButton
@@ -57,11 +73,12 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#24786D',
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: moderateScale(20),
   },
   btn: {
     backgroundColor: '#24786D',
     height: '100%',
-    width: '50%',
     justifyContent: 'center',
     alignItems: 'center',
   },
