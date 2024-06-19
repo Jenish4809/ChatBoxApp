@@ -56,6 +56,31 @@ export default function Chat({route}) {
       .add(myMsg);
   }, []);
 
+  const renderInputToolbar = props => {
+    return (
+      <InputToolbar
+        {...props}
+        containerStyle={styles.inputToolbar}
+        primaryStyle={styles.inputPrimary}
+      />
+    );
+  };
+
+  const renderSend = props => {
+    return (
+      <Send {...props}>
+        <View>
+          <AntDesign
+            name="arrowright"
+            size={moderateScale(25)}
+            color="#24786D"
+            style={styles.sendingContainer}
+          />
+        </View>
+      </Send>
+    );
+  };
+
   return (
     <CSafeAreaView extraStyle={styles.main}>
       <View style={styles.chatheader}>
@@ -78,7 +103,12 @@ export default function Chat({route}) {
             _id: id,
           }}
           renderBubble={renderBubble}
-          textInputStyle={styles.textInput}
+          textInputProps={{
+            multiline: true,
+            style: styles.textInput,
+          }}
+          renderInputToolbar={renderInputToolbar}
+          renderSend={renderSend}
         />
       </ImageBackground>
     </CSafeAreaView>
@@ -112,5 +142,27 @@ const styles = StyleSheet.create({
   },
   textInput: {
     color: '#000',
+    borderRadius: moderateScale(25),
+    borderWidth: 1,
+    borderColor: '#24786D',
+    fontSize: moderateScale(16),
+    paddingHorizontal: moderateScale(15),
+    height: moderateScale(50),
+    width: '85%',
+    marginHorizontal: moderateScale(10),
+    margin: moderateScale(10),
+    paddingVertical: moderateScale(15),
+  },
+  inputToolbar: {
+    justifyContent: 'center',
+  },
+  inputPrimary: {
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  sendingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: moderateScale(10),
   },
 });
