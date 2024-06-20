@@ -4,13 +4,17 @@ import {GiftedChat, InputToolbar, Send} from 'react-native-gifted-chat';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import firestore from '@react-native-firebase/firestore';
 import {moderateScale} from '../Common/Constant';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useNavigation} from '@react-navigation/native';
 import renderBubble from '../Common/renderBubble';
 import images from '../assets/images';
+import strings from '../i18n/strings';
+
 export default function Chat({route}) {
   const {data, id} = route.params;
   const [messages, setMessages] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -32,7 +36,21 @@ export default function Chat({route}) {
       });
       setMessages(messages);
     });
-    return () => unsubscribe();
+    const typingStatusSubscriber = firestore()
+      .collection('chats')
+      .doc(data.userId + id)
+      .collection('typingStatus')
+      .doc(data.userId)
+      .onSnapshot(docSnapshot => {
+        if (docSnapshot.exists) {
+          const {typing, userId} = docSnapshot.data();
+          setIsTyping(typing && userId === data.userId);
+        }
+      });
+    return () => {
+      unsubscribe();
+      typingStatusSubscriber();
+    };
   }, []);
 
   const onSend = useCallback((messages = []) => {
@@ -69,16 +87,32 @@ export default function Chat({route}) {
   const renderSend = props => {
     return (
       <Send {...props}>
-        <View>
-          <AntDesign
-            name="arrowright"
+        <View style={styles.senview}>
+          <MaterialIcons
+            name="send"
             size={moderateScale(25)}
-            color="#24786D"
+            color="white"
             style={styles.sendingContainer}
           />
         </View>
       </Send>
     );
+  };
+
+  const onInputTextChanged = text => {
+    updateTypingStatus(text.length > 0);
+  };
+
+  const updateTypingStatus = isTyping => {
+    firestore()
+      .collection('chats')
+      .doc(id + data.userId)
+      .collection('typingStatus')
+      .doc(id)
+      .set({
+        typing: isTyping,
+        userId: id,
+      });
   };
 
   return (
@@ -94,8 +128,8 @@ export default function Chat({route}) {
       </View>
       <ImageBackground style={styles.innerview} source={images.chatbackground}>
         <GiftedChat
-          placeholderTextColor={'#24786D'}
-          placeholder={'Type a message...'}
+          placeholderTextColor={'#fff'}
+          placeholder={strings.type}
           alwaysShowSend
           messages={messages}
           onSend={messages => onSend(messages)}
@@ -104,11 +138,15 @@ export default function Chat({route}) {
           }}
           renderBubble={renderBubble}
           textInputProps={{
-            multiline: true,
             style: styles.textInput,
           }}
+          onInputTextChanged={onInputTextChanged}
           renderInputToolbar={renderInputToolbar}
           renderSend={renderSend}
+          isTyping={isTyping}
+          messagesContainerStyle={{
+            paddingBottom: moderateScale(15),
+          }}
         />
       </ImageBackground>
     </CSafeAreaView>
@@ -117,8 +155,7 @@ export default function Chat({route}) {
 
 const styles = StyleSheet.create({
   main: {
-    flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
   },
   innerview: {
     flex: 1,
@@ -141,28 +178,37 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   textInput: {
-    color: '#000',
+    color: '#fff',
     borderRadius: moderateScale(25),
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#24786D',
     fontSize: moderateScale(16),
     paddingHorizontal: moderateScale(15),
-    height: moderateScale(50),
-    width: '85%',
-    marginHorizontal: moderateScale(10),
+    height: moderateScale(40),
+    width: '90%',
     margin: moderateScale(10),
-    paddingVertical: moderateScale(15),
+    paddingVertical: moderateScale(10),
   },
   inputToolbar: {
     justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
   },
+
   inputPrimary: {
     alignItems: 'center',
+    marginHorizontal: moderateScale(15),
     backgroundColor: 'transparent',
   },
   sendingContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: moderateScale(10),
+  },
+  senview: {
+    borderRadius: moderateScale(20),
+    padding: moderateScale(5),
+    backgroundColor: '#24786D',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

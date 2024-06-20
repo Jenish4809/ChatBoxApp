@@ -7,6 +7,9 @@ const renderBubble = props => {
   return (
     <Bubble
       {...props}
+      bottomContainerStyle={{
+        height: 200,
+      }}
       wrapperStyle={{
         left: styles.leftBubble,
         right: styles.rightBubble,
