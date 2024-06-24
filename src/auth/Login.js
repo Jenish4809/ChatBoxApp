@@ -1,5 +1,5 @@
 import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import CTextInput from '../Common/CTextInput';
 import {moderateScale} from '../Common/Constant';
@@ -7,11 +7,16 @@ import CButton from '../Common/CButton';
 import firestore from '@react-native-firebase/firestore';
 import {CLoader} from '../Common/CLoader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import CModalLang from '../Common/CModalLang';
+import {translation} from '../utils/languages';
 
 export default function Login({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [langVisible, setLangVisible] = useState(false);
+  const [language, setLanguage] = useState(0);
 
   const onChangeEmail = text => setEmail(text);
   const onChangePassword = text => setPassword(text);
@@ -39,6 +44,10 @@ export default function Login({navigation}) {
       });
   };
 
+  const saveSelectedLang = async lang => {
+    await AsyncStorage.setItem('LANGUAGE', String(lang));
+  };
+
   const gotoNext = async (name, email, userId) => {
     await AsyncStorage.setItem('NAME', String(name)),
       await AsyncStorage.setItem('EMAIL', String(email)),
@@ -48,8 +57,25 @@ export default function Login({navigation}) {
   return (
     <CSafeAreaView extraStyle={{backgroundColor: 'white'}}>
       <View style={styles.main}>
+        <MaterialIcons
+          name="language"
+          size={35}
+          color={'#24786D'}
+          style={styles.language}
+          onPress={() => setLangVisible(!langVisible)}
+        />
         <View style={styles.innerview}>
-          <Text style={styles.title}>Log in</Text>
+          <Text style={styles.title}>
+            {language === 0
+              ? translation[0].English
+              : language === 1
+              ? translation[0].Hindi
+              : language === 2
+              ? translation[0].Punjabi
+              : language === 3
+              ? translation[0].Tamil
+              : translation[0].Urdu}
+          </Text>
           <CTextInput
             title={'Email'}
             keyboardType={'email-address'}
@@ -71,6 +97,14 @@ export default function Login({navigation}) {
         <TouchableOpacity onPress={onpressLogin}>
           <Text style={styles.login}>Or SignUp</Text>
         </TouchableOpacity>
+        <CModalLang
+          langVisible={langVisible}
+          setLangVisible={setLangVisible}
+          onselectLang={lang => {
+            setLanguage(lang);
+            saveSelectedLang(lang);
+          }}
+        />
       </View>
     </CSafeAreaView>
   );
@@ -107,5 +141,9 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontSize: moderateScale(15),
     fontWeight: 'bold',
+  },
+  language: {
+    alignSelf: 'flex-end',
+    marginHorizontal: moderateScale(20),
   },
 });

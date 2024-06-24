@@ -4,4 +4,6 @@ export default {
   setting: require('./setting.png'),
   chatbackground: require('./chatbackground.jpeg'),
   apiuser: require('./apiuser.png'),
+  radio: require('./radio.png'),
+  radiobutton: require('./radio-button.png'),
 };
