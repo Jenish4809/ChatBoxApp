@@ -9,7 +9,7 @@ export default function CTextInput(props) {
     <View>
       <Text style={styles.titlesty}>{title}</Text>
       <TextInput
-        style={styles.inputsty}
+        style={[styles.inputsty || extrastyle]}
         onChangeText={onChangeText}
         value={value}
         keyboardType={keyboardType}

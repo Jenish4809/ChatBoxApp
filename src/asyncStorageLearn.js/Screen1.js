@@ -1,11 +1,12 @@
 import {Alert, StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import CTextInput from '../Common/CTextInput';
 import {moderateScale} from '../Common/Constant';
 import CButton from '../Common/CButton';
 import CKeyboardAvoidWrapper from '../Common/CKeyboardAvoidWrapper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 export default function Screen1({navigation}) {
   const [email, setEmail] = useState('');
@@ -30,21 +31,33 @@ export default function Screen1({navigation}) {
     return isValid;
   };
 
-  const getUserData = async () => {
-    const data = {
-      email: email,
-      name: name,
-      mobile: mobile,
-      gender: gender,
+  const setUserData = async () => {
+    const userData = {
+      email,
+      name,
+      mobile,
+      gender,
     };
-    await AsyncStorage.setItem('USERDATA', JSON.stringify(data));
+    let data = await AsyncStorage.getItem('USERDATA');
+    let add = JSON.parse(data) || [];
+    userData.id = add.length + 1;
+    add.push(userData);
+    await AsyncStorage.setItem('USERDATA', JSON.stringify(add));
     Alert.alert('Data saved successfully');
     navigation.navigate('Screen2');
+    setEmail('');
+    setName('');
+    setMobile('');
+    setGender('');
   };
 
+  const onPressNext = () => navigation.navigate('Screen2');
   return (
     <CSafeAreaView extraStyle={{backgroundColor: 'white'}}>
       <View style={styles.main}>
+        <View style={styles.header}>
+          <AntDesign name="arrowright" size={25} onPress={onPressNext} />
+        </View>
         <CKeyboardAvoidWrapper>
           <View style={styles.innerview}>
             <Text style={styles.title}>User Data</Text>
@@ -76,7 +89,7 @@ export default function Screen1({navigation}) {
           title={'Save'}
           onPress={() => {
             if (validate()) {
-              getUserData();
+              setUserData();
             }
           }}
         />
@@ -93,9 +106,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: moderateScale(18),
-    alignSelf: 'center',
     fontWeight: 'bold',
-    marginBottom: moderateScale(20),
+    alignSelf: 'center',
   },
   btn: {
     backgroundColor: '#F3F6F6',
@@ -107,5 +119,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     marginTop: moderateScale(100),
+  },
+  header: {
+    alignItems: 'flex-end',
+    marginTop: moderateScale(15),
+    paddingHorizontal: moderateScale(20),
   },
 });
