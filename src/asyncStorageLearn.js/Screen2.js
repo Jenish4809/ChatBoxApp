@@ -3,8 +3,9 @@ import React, {useEffect, useState} from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {moderateScale} from '../Common/Constant';
+import CButton from '../Common/CButton';
 
-export default function Screen2() {
+export default function Screen2({navigation}) {
   const [userData, setUserData] = useState([]);
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState([]);
@@ -25,6 +26,24 @@ export default function Screen2() {
     setSearch(text);
   };
 
+  const onPressDeteUser = async id => {
+    const data = await AsyncStorage.getItem('USERDATA');
+    let userData = JSON.parse(data);
+    const newData = userData.filter(item => item.id !== id);
+    await AsyncStorage.setItem('USERDATA', JSON.stringify(newData));
+    getUserData();
+  };
+
+  const onPressEditUser = item => {
+    navigation.navigate('Screen1', {
+      email: item.email,
+      name: item.name,
+      mobile: item.mobile,
+      gender: item.gender,
+      id: item.id,
+    });
+  };
+
   const renderUserData = ({item}) => {
     return (
       <View style={styles.dataview}>
@@ -32,6 +51,20 @@ export default function Screen2() {
         <Text style={styles.datatext}>{item.name}</Text>
         <Text style={styles.datatext}>{item.mobile}</Text>
         <Text style={styles.datatext}>{item.gender}</Text>
+        <View style={styles.btnview}>
+          <CButton
+            title={'Edit'}
+            extrabtn={styles.editbtn}
+            extratitle={styles.btntext}
+            onPress={() => onPressEditUser(item)}
+          />
+          <CButton
+            title={'Delete'}
+            extrabtn={styles.editbtn}
+            extratitle={styles.btntext}
+            onPress={() => onPressDeteUser(item.id)}
+          />
+        </View>
       </View>
     );
   };
@@ -95,6 +128,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: '#24786D',
     gap: 10,
+    borderRadius: moderateScale(10),
   },
   innerview: {
     flex: 1,
@@ -112,5 +146,21 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: moderateScale(10),
     fontSize: moderateScale(16),
+  },
+  editbtn: {
+    backgroundColor: '#F3F6F6',
+    padding: moderateScale(10),
+    width: moderateScale(100),
+    marginVertical: moderateScale(0),
+  },
+  btntext: {
+    color: '#24786D',
+    fontSize: moderateScale(16),
+  },
+  btnview: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginTop: 10,
   },
 });
