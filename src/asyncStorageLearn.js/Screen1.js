@@ -1,4 +1,4 @@
-import {Alert, StyleSheet, Text, View} from 'react-native';
+import {Alert, Button, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import CTextInput from '../Common/CTextInput';
@@ -8,6 +8,8 @@ import CKeyboardAvoidWrapper from '../Common/CKeyboardAvoidWrapper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CRadioButton from '../Common/CRadio';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import moment from 'moment';
 
 export default function Screen1({navigation, route}) {
   const item = route?.params;
@@ -16,6 +18,21 @@ export default function Screen1({navigation, route}) {
   const [mobile, setMobile] = useState('');
   const [gender, setGender] = useState('');
   const [userId, setUserId] = useState(null);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [date, setDate] = useState();
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = date => {
+    setDate(moment(date).format('DD-MM-YYYY'));
+    hideDatePicker();
+  };
 
   const onChangeEmail = text => setEmail(text);
   const onChangeName = text => setName(text);
@@ -23,7 +40,7 @@ export default function Screen1({navigation, route}) {
 
   const validate = () => {
     let isValid = true;
-    if (!email || !name || !mobile || !gender) {
+    if (!email || !name || !mobile || !gender || !date) {
       Alert.alert('All fields are required');
       isValid = false;
     } else if (!email.includes('@')) {
@@ -40,6 +57,7 @@ export default function Screen1({navigation, route}) {
       mobile,
       gender,
       id: userId,
+      date,
     };
 
     let data = await AsyncStorage.getItem('USERDATA');
@@ -125,6 +143,24 @@ export default function Screen1({navigation, route}) {
                 label="Female"
               />
             </View>
+            <View style={styles.dateview}>
+              <CButton
+                title={'Choose Date'}
+                extrabtn={styles.datebtn}
+                onPress={showDatePicker}
+              />
+              <Text style={styles.label}>
+                {!!date ? `Date : ${date}` : 'Choose Date'}
+              </Text>
+            </View>
+            <DateTimePickerModal
+              buttonTextColorIOS="#24786D"
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+              maximumDate={new Date()}
+            />
           </View>
         </CKeyboardAvoidWrapper>
         <CButton
@@ -177,5 +213,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: moderateScale(20),
     alignItems: 'center',
+  },
+  datebtn: {
+    width: moderateScale(150),
+    alignSelf: 'flex-start',
+    marginLeft: moderateScale(30),
+  },
+  dateview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginRight: moderateScale(30),
   },
 });

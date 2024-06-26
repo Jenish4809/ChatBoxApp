@@ -1,18 +1,27 @@
-import {StyleSheet, Text, TextInput, View, FlatList} from 'react-native';
+import {StyleSheet, Text, TextInput, View, FlatList, Alert} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {moderateScale} from '../Common/Constant';
 import CButton from '../Common/CButton';
+import {useIsFocused} from '@react-navigation/native';
 
 export default function Screen2({navigation}) {
   const [userData, setUserData] = useState([]);
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState([]);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    getUserData();
-  }, []);
+    isFocused && getUserData();
+  }, [isFocused]);
+
+  const extractLetters = name => {
+    const firstLetter = name.charAt(0).toUpperCase();
+    const lastLetter = name.charAt(name.length - 1).toUpperCase();
+    const result = `${firstLetter}${lastLetter}`;
+    return result;
+  };
 
   const getUserData = async () => {
     const data = await AsyncStorage.getItem('USERDATA');
@@ -27,11 +36,21 @@ export default function Screen2({navigation}) {
   };
 
   const onPressDeteUser = async id => {
-    const data = await AsyncStorage.getItem('USERDATA');
-    let userData = JSON.parse(data);
-    const newData = userData.filter(item => item.id !== id);
-    await AsyncStorage.setItem('USERDATA', JSON.stringify(newData));
-    getUserData();
+    Alert.alert('Delete', 'Are you sure you want to delete this user?', [
+      {
+        text: 'Cancel',
+      },
+      {
+        text: 'OK',
+        onPress: async () => {
+          const data = await AsyncStorage.getItem('USERDATA');
+          let userData = JSON.parse(data);
+          const newData = userData.filter(item => item.id !== id);
+          await AsyncStorage.setItem('USERDATA', JSON.stringify(newData));
+          getUserData();
+        },
+      },
+    ]);
   };
 
   const onPressEditUser = item => {
@@ -41,6 +60,7 @@ export default function Screen2({navigation}) {
       mobile: item.mobile,
       gender: item.gender,
       id: item.id,
+      date: item.date,
     });
   };
 
@@ -48,9 +68,13 @@ export default function Screen2({navigation}) {
     return (
       <View style={styles.dataview}>
         <Text style={styles.datatext}>{item.email}</Text>
-        <Text style={styles.datatext}>{item.name}</Text>
+        <View style={styles.nameview}>
+          <Text style={styles.datatext}>{extractLetters(item.name)} :</Text>
+          <Text style={styles.datatext}>{item.name}</Text>
+        </View>
         <Text style={styles.datatext}>{item.mobile}</Text>
         <Text style={styles.datatext}>{item.gender}</Text>
+        <Text style={styles.datatext}>{item.date}</Text>
         <View style={styles.btnview}>
           <CButton
             title={'Edit'}
@@ -162,5 +186,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     width: '100%',
     marginTop: 10,
+  },
+  nameview: {
+    flexDirection: 'row',
+    gap: 10,
   },
 });
