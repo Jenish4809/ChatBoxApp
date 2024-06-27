@@ -1,4 +1,4 @@
-import {Alert, Button, StyleSheet, Text, View} from 'react-native';
+import {Alert, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import CTextInput from '../Common/CTextInput';
@@ -10,9 +10,16 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import CRadioButton from '../Common/CRadio';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import moment from 'moment';
+import {useDispatch, useSelector} from 'react-redux';
+import {saveUserData} from './Redux/actions/userActions';
 
 export default function Screen1({navigation, route}) {
+  const dispatch = useDispatch();
+
+  const data = useSelector(state => state.users.userData);
+
   const item = route?.params;
+
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
@@ -56,27 +63,25 @@ export default function Screen1({navigation, route}) {
       name,
       mobile,
       gender,
-      id: userId,
       date,
     };
-
-    let data = await AsyncStorage.getItem('USERDATA');
-    let users = JSON.parse(data) || [];
-
-    if (userId) {
-      // Update existing user
-      const index = users.findIndex(user => user.id === userId);
-      if (index !== -1) {
-        users[index] = userData;
-      }
-    } else {
-      // Add new user
+    if (!item) {
+      let newGetData = await AsyncStorage.getItem('USERDATA');
+      let users = JSON.parse(newGetData) || [];
       userData.id = users.length + 1;
       users.push(userData);
+      await AsyncStorage.setItem('USERDATA', JSON.stringify(users));
+      dispatch(saveUserData([...data, userData]));
+      Alert.alert('Data saved successfully');
+    } else {
+      let newGetData = await AsyncStorage.getItem('USERDATA');
+      let users = JSON.parse(newGetData) || [];
+      const index = users.findIndex(item => item.id === userId);
+      users[index] = {...userData, id: userId};
+      await AsyncStorage.setItem('USERDATA', JSON.stringify(users));
+      dispatch(saveUserData(users));
+      Alert.alert('Data Updated successfully');
     }
-
-    await AsyncStorage.setItem('USERDATA', JSON.stringify(users));
-    Alert.alert('Data saved successfully');
     navigation.navigate('Screen2');
     resetForm();
   };
@@ -150,7 +155,7 @@ export default function Screen1({navigation, route}) {
                 onPress={showDatePicker}
               />
               <Text style={styles.label}>
-                {!!date ? `Date : ${date}` : 'Choose Date'}
+                {!!date ? `Date : ${date}` : 'Date : '}
               </Text>
             </View>
             <DateTimePickerModal

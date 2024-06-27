@@ -13,8 +13,10 @@ import {
   notificationListner,
   requestUserPermission,
 } from './src/utils/notificationService';
-import Screen1 from './src/asyncStorageLearn.js/Screen1';
-import Screen2 from './src/asyncStorageLearn.js/Screen2';
+import Screen1 from './src/asyncStorageLearn/Screen1';
+import Screen2 from './src/asyncStorageLearn/Screen2';
+import {Provider} from 'react-redux';
+import store from './src/asyncStorageLearn/Redux/store/store';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -24,22 +26,24 @@ export default function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}>
-        <Stack.Screen name="Screen1" component={Screen1} />
-        <Stack.Screen name="Screen2" component={Screen2} />
-        <Stack.Screen name="Splash" component={Splash} />
-        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Settings" component={Settings} />
-        <Stack.Screen name="Users" component={Users} />
-        <Stack.Screen name="Chat" component={Chat} />
-        <Stack.Screen name="ApiUserData" component={ApiUserData} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Screen name="Splash" component={Splash} />
+          <Stack.Screen name="Screen1" component={Screen1} />
+          <Stack.Screen name="Screen2" component={Screen2} />
+          <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Settings" component={Settings} />
+          <Stack.Screen name="Users" component={Users} />
+          <Stack.Screen name="Chat" component={Chat} />
+          <Stack.Screen name="ApiUserData" component={ApiUserData} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }

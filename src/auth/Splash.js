@@ -3,22 +3,35 @@ import React, {useEffect} from 'react';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import images from '../assets/images';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import {saveUserData} from '../asyncStorageLearn/Redux/actions/userActions';
 
 export default function Splash({navigation}) {
+  const dispatch = useDispatch();
+
   useEffect(() => {
+    userDataGet();
     setTimeout(() => {
-     checkLogin()
-    }, 3000);
+      navigation.replace('Screen1');
+    }, 1000);
   }, []);
 
-  const checkLogin = async()=>{
-    const id = await AsyncStorage.getItem("USERID")
-    if(id){
-      navigation.navigate('Home')
-    }else{
-      navigation.navigate('Login')
-    }  
-  }
+  const userDataGet = async () => {
+    const getData = await AsyncStorage.getItem('USERDATA');
+    if (getData) {
+      dispatch(saveUserData(JSON.parse(getData)));
+    }
+  };
+
+  const checkLogin = async () => {
+    const id = await AsyncStorage.getItem('USERID');
+    if (id) {
+      navigation.navigate('Home');
+    } else {
+      navigation.navigate('Login');
+    }
+  };
+
   return (
     <CSafeAreaView extraStyle={{backgroundColor: 'transparent'}}>
       <View style={styles.main}>

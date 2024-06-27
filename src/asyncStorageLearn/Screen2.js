@@ -5,8 +5,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {moderateScale} from '../Common/Constant';
 import CButton from '../Common/CButton';
 import {useIsFocused} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {deleteUserData} from './Redux/actions/userActions';
 
 export default function Screen2({navigation}) {
+  const data = useSelector(state => state.users.userData);
+
+  const dispathch = useDispatch();
+
   const [userData, setUserData] = useState([]);
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState([]);
@@ -17,17 +23,16 @@ export default function Screen2({navigation}) {
   }, [isFocused]);
 
   const extractLetters = name => {
-    const firstLetter = name.charAt(0).toUpperCase();
-    const lastLetter = name.charAt(name.length - 1).toUpperCase();
+    const firstLetter = name?.charAt(0).toUpperCase();
+    const lastLetter = name?.charAt(name.length - 1).toUpperCase();
     const result = `${firstLetter}${lastLetter}`;
     return result;
   };
 
   const getUserData = async () => {
-    const data = await AsyncStorage.getItem('USERDATA');
     if (data) {
-      setUserData(JSON.parse(data));
-      setFilteredData(JSON.parse(data));
+      const getData = await AsyncStorage.getItem('USERDATA');
+      setUserData(JSON.parse(getData));
     }
   };
 
@@ -35,7 +40,7 @@ export default function Screen2({navigation}) {
     setSearch(text);
   };
 
-  const onPressDeteUser = async id => {
+  const onPressDeleteUser = async id => {
     Alert.alert('Delete', 'Are you sure you want to delete this user?', [
       {
         text: 'Cancel',
@@ -43,11 +48,9 @@ export default function Screen2({navigation}) {
       {
         text: 'OK',
         onPress: async () => {
-          const data = await AsyncStorage.getItem('USERDATA');
-          let userData = JSON.parse(data);
           const newData = userData.filter(item => item.id !== id);
           await AsyncStorage.setItem('USERDATA', JSON.stringify(newData));
-          getUserData();
+          dispathch(deleteUserData(id));
         },
       },
     ]);
@@ -67,14 +70,25 @@ export default function Screen2({navigation}) {
   const renderUserData = ({item}) => {
     return (
       <View style={styles.dataview}>
-        <Text style={styles.datatext}>{item.email}</Text>
+        <Text
+          style={[
+            styles.datatext,
+            {
+              alignSelf: 'flex-start',
+              backgroundColor: '#000',
+              padding: moderateScale(10),
+            },
+          ]}>
+          {item?.id}
+        </Text>
+        <Text style={styles.datatext}>{item?.email}</Text>
         <View style={styles.nameview}>
-          <Text style={styles.datatext}>{extractLetters(item.name)} :</Text>
+          <Text style={styles.datatext}>{extractLetters(item?.name)} :</Text>
           <Text style={styles.datatext}>{item.name}</Text>
         </View>
-        <Text style={styles.datatext}>{item.mobile}</Text>
-        <Text style={styles.datatext}>{item.gender}</Text>
-        <Text style={styles.datatext}>{item.date}</Text>
+        <Text style={styles.datatext}>{item?.mobile}</Text>
+        <Text style={styles.datatext}>{item?.gender}</Text>
+        <Text style={styles.datatext}>{item?.date}</Text>
         <View style={styles.btnview}>
           <CButton
             title={'Edit'}
@@ -86,7 +100,7 @@ export default function Screen2({navigation}) {
             title={'Delete'}
             extrabtn={styles.editbtn}
             extratitle={styles.btntext}
-            onPress={() => onPressDeteUser(item.id)}
+            onPress={() => onPressDeleteUser(item.id)}
           />
         </View>
       </View>
@@ -95,13 +109,13 @@ export default function Screen2({navigation}) {
 
   useEffect(() => {
     filterUserData();
-  }, [search, userData]);
+  }, [search, data]);
 
   const filterUserData = () => {
     if (search === '') {
-      setFilteredData(userData);
+      setFilteredData(data);
     } else {
-      const filtered = userData.filter(item =>
+      const filtered = data.filter(item =>
         item.name.toLowerCase().includes(search.toLowerCase()),
       );
       setFilteredData(filtered);
