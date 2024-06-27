@@ -1,11 +1,11 @@
 import {StyleSheet, Text, TextInput, View, FlatList, Alert} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import CSafeAreaView from '../Common/CSafeAreaView';
+import {useDispatch, useSelector} from 'react-redux';
+import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CSafeAreaView from '../Common/CSafeAreaView';
 import {moderateScale} from '../Common/Constant';
 import CButton from '../Common/CButton';
-import {useIsFocused} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
 import {deleteUserData} from './Redux/actions/userActions';
 
 export default function Screen2({navigation}) {
@@ -70,18 +70,19 @@ export default function Screen2({navigation}) {
   const renderUserData = ({item}) => {
     return (
       <View style={styles.dataview}>
-        <Text
-          style={[
-            styles.datatext,
-            {
-              alignSelf: 'flex-start',
-              backgroundColor: '#000',
-              padding: moderateScale(10),
-            },
-          ]}>
-          {item?.id}
-        </Text>
-        <Text style={styles.datatext}>{item?.email}</Text>
+        <View style={styles.idview}>
+          <Text
+            style={[
+              styles.datatext,
+              {
+                backgroundColor: '#000',
+                padding: moderateScale(10),
+              },
+            ]}>
+            {item?.id}
+          </Text>
+          <Text style={styles.datatext}>{item?.email}</Text>
+        </View>
         <View style={styles.nameview}>
           <Text style={styles.datatext}>{extractLetters(item?.name)} :</Text>
           <Text style={styles.datatext}>{item.name}</Text>
@@ -204,5 +205,10 @@ const styles = StyleSheet.create({
   nameview: {
     flexDirection: 'row',
     gap: 10,
+  },
+  idview: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
   },
 });

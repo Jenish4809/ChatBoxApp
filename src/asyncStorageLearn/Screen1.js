@@ -1,22 +1,23 @@
 import {Alert, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import moment from 'moment';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import CSafeAreaView from '../Common/CSafeAreaView';
 import CTextInput from '../Common/CTextInput';
 import {moderateScale} from '../Common/Constant';
 import CButton from '../Common/CButton';
 import CKeyboardAvoidWrapper from '../Common/CKeyboardAvoidWrapper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import CRadioButton from '../Common/CRadio';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import moment from 'moment';
-import {useDispatch, useSelector} from 'react-redux';
-import {saveUserData} from './Redux/actions/userActions';
+import {getPostData, saveUserData} from './Redux/actions/userActions';
 
 export default function Screen1({navigation, route}) {
   const dispatch = useDispatch();
 
   const data = useSelector(state => state.users.userData);
+  // const posts = useSelector(state => state.users.postData);
 
   const item = route?.params;
 
@@ -27,6 +28,10 @@ export default function Screen1({navigation, route}) {
   const [userId, setUserId] = useState(null);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [date, setDate] = useState();
+
+  useEffect(() => {
+    dispatch(getPostData());
+  }, []);
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);

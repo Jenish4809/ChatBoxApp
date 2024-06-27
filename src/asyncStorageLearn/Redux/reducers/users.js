@@ -1,7 +1,8 @@
-import {DELETE_USER_DATA, SAVE_USER_DATA} from '../type';
+import {DELETE_USER_DATA, GET_POST_DATA, SAVE_USER_DATA} from '../type';
 
 const initialState = {
   userData: [],
+  postData: [],
 };
 
 export default function (state = initialState, action) {
@@ -16,6 +17,11 @@ export default function (state = initialState, action) {
       return {
         ...state,
         userData: newData,
+      };
+    case GET_POST_DATA:
+      return {
+        ...state,
+        postData: action.payload,
       };
     default:
       return state;
